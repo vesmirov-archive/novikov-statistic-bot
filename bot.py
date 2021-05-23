@@ -75,48 +75,6 @@ def send_spendings_for_yesterday(message):
     )
 
 
-write_data_to_google_sheet(manager, SHEET_KEY, WORKSHEET_ID, data)
-
+# write_data_to_google_sheet(manager, SHEET_KEY, WORKSHEET_ID, data)
 
 bot.polling()
-
-#     "ddu": {
-#         "ddu.novikov-pravo.ru": 466.62,
-#         "ddumos.novikov-pravo.ru": 1447.62,
-#         "ddu.novikov-pravo.ru/calc": 2178.168,
-#         "ddu.novikov-pravo.ru/priemka": 36.168,
-#     },
-#     "zaliv": {
-#         "zaliv.novikov-pravo.ru/ocenka": 4694.388,
-#         "zaliv.novikov-pravo.ru": 1862.424,
-#         "zaliv.novikov-pravo.ru/ocenka_usherba2/v3.php": 1334.1456,
-#         "zaliv.novikov-pravo.ru/ekspertiza": 5511.12,
-#         "zaliv.grafo77.ru": 186.876,
-#     },
-#     "reg": {},
-#     "other": {
-#         "Неизвестное значение": 0,
-#         "novikov-pravo.ru": 0
-#     },
-# }
-
-# {
-#     "ddu": {
-#         "ddu.novikov-pravo.ru": 0
-#     },
-#     "priemka": {},
-#     "zaliv": {
-#         "zaliv.novikov-pravo.ru/ocenka": 110.904,
-#         "zaliv.novikov-pravo.ru": 0,
-#         "zaliv.novikov-pravo.ru/ekspertiza": 0,
-#         "zaliv.novikov-pravo.ru/ocenka_usherba": 102.684,
-#     },
-#     "reg": {
-#         "registr.novikov-pravo.ru": 0
-#     },
-#     "other": {
-#         "face-massage-lipetsk.ru": 0,
-#         "pravo.novikov-pravo.ru": 0,
-#         "novikov-pravo.ru": 0,
-#     },
-# }
