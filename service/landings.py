@@ -55,7 +55,7 @@ def get_landing_values(key, project, day):
 
 def get_category_values(key, project, day):
     categories = {}
-    
+
     landing_pages = get_landing_values(key, project, day)
     for category, landings in landing_pages.items():
         categories[category] = sum(landings.values())
