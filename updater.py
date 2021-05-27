@@ -21,7 +21,7 @@ SERVICE_FILE = env.get('SERVICE_FILE')
 def main():
     today = datetime.date.today()
     data = get_category_values(API_KEY, PROJECT, today)
-    
+
     manager = pygsheets.authorize(service_file=SERVICE_FILE)
     write_data_to_google_sheet(manager, SHEET_KEY, WORKSHEET_ID, data)
 

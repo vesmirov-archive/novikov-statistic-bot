@@ -1,5 +1,3 @@
-import datetime
-
 import requests
 
 DDU_PREFIX = 'ddu'
@@ -21,7 +19,10 @@ def get_landing_values(key, project, day):
     }
 
     headers = {'content-type': 'application/json'}
-    url = API_URL.format(f'project/analytics/data') + f'key={key}' + '&' + f'project={project}'
+    url = (
+        API_URL.format('project/analytics/data')
+        + f'key={key}' + '&' + f'project={project}'
+    )
     payload = {
         'dimensions': ['landing_page'],
         'metrics': ['marketing_cost'],

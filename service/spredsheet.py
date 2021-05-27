@@ -1,7 +1,5 @@
 import time
 
-import pygsheets
-
 START_DATE = 16074
 
 ROW_SHIFT = 2

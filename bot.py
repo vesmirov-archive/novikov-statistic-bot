@@ -6,11 +6,8 @@ import pygsheets
 from dotenv import dotenv_values
 
 from service import db
-from service.landings import get_landing_values, get_category_values
-from service.spredsheet import (
-    write_data_to_google_sheet,
-    get_data_from_google_sheet,
-)
+from service.landings import get_landing_values
+from service.spredsheet import get_data_from_google_sheet
 
 env = dotenv_values('.env')
 
@@ -103,9 +100,9 @@ def send_spendings_for_yesterday(message):
     result = ['Расходы на рекламу за вчера']
     for name, values in lands.items():
         result.append(f'{name.upper()}:')
-        result.extend([f'{round(p)} - {l}' for l, p in values.items()])
+        result.extend([f'{round(pr)} - {land}' for land, pr in values.items()])
         result.append('')
-    
+
     bot.send_message(
         message.from_user.id,
         '\n'.join(result),
@@ -121,9 +118,9 @@ def send_spendings_for_today(message):
     result = ['Расходы на рекламу за сегодня']
     for name, values in lands.items():
         result.append(f'{name.upper()}:')
-        result.extend([f'{round(p)} - {l}' for l, p in values.items()])
+        result.extend([f'{round(pr)} - {land}' for land, pr in values.items()])
         result.append('')
-    
+
     bot.send_message(
         message.from_user.id,
         '\n'.join(result),
@@ -140,7 +137,7 @@ def send_statistic(message):
         result.append(f'{category.upper()}:')
         result.extend([f'{name} - {val}' for name, val in values.items()])
         result.append('')
-    bot.send_message(message.from_user.id,'\n'.join(result))
+    bot.send_message(message.from_user.id, '\n'.join(result))
 
 
 @bot.message_handler(commands=['users'])
@@ -172,7 +169,8 @@ def adding_user(message):
             username = data[1]
             is_admin = True if data[2] == 'да' else False
         except ValueError:
-            bot.send_message(message.from_user.id, 'Отправленный формат неверен.')
+            bot.send_message(
+                message.from_user.id, 'Отправленный формат неверен.')
         finally:
             db.add_user(cursor, connect, user_id, username, is_admin)
             bot.send_message(
