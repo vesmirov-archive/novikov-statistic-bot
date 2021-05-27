@@ -15,6 +15,7 @@ google-auth-oauthlib = "^0.4.4"
 google-auth-httplib2 = "^0.1.0"
 pygsheets = "^2.0.5"
 python-crontab = "^2.5.1"
+psycopg2-binary = "^2.8.6"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"

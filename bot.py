@@ -5,6 +5,7 @@ import telebot
 import pygsheets
 from dotenv import dotenv_values
 
+from service import db
 from service.landings import get_landing_values, get_category_values
 from service.spredsheet import (
     write_data_to_google_sheet,
@@ -34,28 +35,52 @@ START = (
     'и отправлять ежедневную статистику в чат.\n'
     'По любым вопросам можно обратиться к '
     '@vilagov или @karlos979.'
-    )
+)
+START_ANONIMUS = (
+    'У вас нет прав для использования данного бота.\n'
+    'Обратитесь к @vilagov или @karlos979, если уверены '
+    'что вам нужен доступ.'
+)
 HELP = (
     'Команды:\n'
-    '/today - показать расходы за сегодняшний день\n'
-    '/yesterday - показать расходы за вчерашний день\n'
-    '/statistic - собрать статистику за сегодня'
+    '/today - отобразить расходы за сегодняшний день\n'
+    '/yesterday - отобразить расходы за вчерашний день\n'
+    '/statistic - собрать статистику за сегодня\n'
+    '/users - отобразить список пользователей\n'
+    '/adduser - добавить пользователя'
 )
 
 
 bot = telebot.TeleBot(TOKEN)
 manager = pygsheets.authorize(service_file=SERVICE_FILE)
+connect, cursor = db.connect_database(env)
 
-
-markup = telebot.types.ReplyKeyboardMarkup(row_width=2)
+markup = telebot.types.ReplyKeyboardMarkup(row_width=3)
 itembtn1 = telebot.types.KeyboardButton('/statistic')
 itembtn2 = telebot.types.KeyboardButton('/today')
 itembtn3 = telebot.types.KeyboardButton('/yesterday')
 itembtn4 = telebot.types.InlineKeyboardButton('/help')
-markup.add(itembtn1, itembtn2, itembtn3, itembtn4)
+itembtn5 = telebot.types.InlineKeyboardButton('/users')
+itembtn6 = telebot.types.InlineKeyboardButton('/adduser')
+markup.add(itembtn1, itembtn2, itembtn3, itembtn4, itembtn5, itembtn6)
+
+
+def permission_check(func):
+    """
+    User permission check decorator.
+    If user id not in database, send 'deny access' message.
+    """
+
+    def inner(message):
+        if db.user_has_permissions(cursor, message.from_user.id):
+            func(message)
+        else:
+            bot.send_message(message.from_user.id, START_ANONIMUS)
+    return inner
 
 
 @bot.message_handler(commands=['start'])
+@permission_check
 def send_welcome(message):
 
     user_id = message.from_user.id
@@ -64,12 +89,14 @@ def send_welcome(message):
 
 
 @bot.message_handler(commands=['help'])
+@permission_check
 def send_help_text(message):
 
     bot.send_message(message.from_user.id, HELP)
 
 
 @bot.message_handler(commands=['yesterday'])
+@permission_check
 def send_spendings_for_yesterday(message):
     yesterday = datetime.date.today() - datetime.timedelta(days=1)
     lands = get_landing_values(API_KEY, PROJECT, yesterday)
@@ -87,6 +114,7 @@ def send_spendings_for_yesterday(message):
 
 
 @bot.message_handler(commands=['today'])
+@permission_check
 def send_spendings_for_today(message):
     today = datetime.date.today()
     lands = get_landing_values(API_KEY, PROJECT, today)
@@ -104,6 +132,7 @@ def send_spendings_for_today(message):
 
 
 @bot.message_handler(commands=['statistic'])
+@permission_check
 def send_statistic(message):
     result = ['Статистика за сегодня']
     data = get_data_from_google_sheet(manager, SHEET_KEY, WORKSHEET_ID)
@@ -114,4 +143,43 @@ def send_statistic(message):
     bot.send_message(message.from_user.id,'\n'.join(result))
 
 
+@bot.message_handler(commands=['users'])
+@permission_check
+def send_list_users(message):
+    users = db.list_users(cursor)
+    bot.send_message(message.from_user.id, users)
+
+
+@bot.message_handler(commands=['adduser'])
+@permission_check
+def start_adding_user(message):
+    message = bot.send_message(
+        message.from_user.id,
+        'Отправьте данные добавляемого пользователя в следующем формате:\n'
+        '<ID_пользователя> <имя_пользователя> <админ_доступ_(да/нет)>\n\n'
+        'Пример:\n'
+        '123456789 vilagov да'
+    )
+    bot.register_next_step_handler(message, adding_user)
+
+
+def adding_user(message):
+    data = message.text.split()
+
+    if len(data) == 3:
+        try:
+            user_id = int(data[0])
+            username = data[1]
+            is_admin = True if data[2] == 'да' else False
+        except ValueError:
+            bot.send_message(message.from_user.id, 'Отправленный формат неверен.')
+        finally:
+            db.add_user(cursor, user_id, username, is_admin)
+            bot.send_message(
+                message.from_user.id,
+                f'Пользователь "{username}" добавлен.'
+            )
+
+
 bot.polling()
+connect.close()

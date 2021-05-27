@@ -4,6 +4,7 @@ import telebot
 import pygsheets
 from dotenv import dotenv_values
 
+from service import db
 from service.spredsheet import get_data_from_google_sheet
 
 env = dotenv_values('.env')
@@ -25,6 +26,8 @@ SERVICE_FILE = env.get('SERVICE_FILE')
 USER_1=env.get('TELEGRAM_TO_1')
 
 def main():
+    connect, cursor = db.connect_database(env)
+
     bot = telebot.TeleBot(TOKEN)
     manager = pygsheets.authorize(service_file=SERVICE_FILE)
 
@@ -34,7 +37,17 @@ def main():
         result.append(f'{category.upper()}:')
         result.extend([f'{name} - {val}' for name, val in values.items()])
         result.append('')
-    bot.send_message(USER_1,'\n'.join(result))
+    
+    cursor.execute("SELECT user_id, is_admin FROM users")
+    users = cursor.fetchall()
+
+    for user in users:
+        if user[1]:
+            bot.send_message(
+                user[0],'\n'.join(result)
+            )
+
+    connect.close()
 
 
 if __name__ == '__main__':
