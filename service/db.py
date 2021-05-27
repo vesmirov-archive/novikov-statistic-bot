@@ -33,7 +33,6 @@ def list_users(cursor):
     rows = cursor.fetchall()
     users = []
     for row in rows:
-        print(row)
         role = '(admin)' if row[1] else ''
         users.append(f"user: {row[0]} {role}")
     return '\n'.join(users)
