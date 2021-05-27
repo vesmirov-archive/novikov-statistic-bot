@@ -3,3 +3,6 @@ make lint:
 
 make start:
 	poetry run python bot.py
+
+make schedule:
+	poetry run python scheduler.py
