@@ -46,7 +46,6 @@ def main():
             bot.send_message(
                 user[0],'\n'.join(result)
             )
-
     connect.close()
 
 

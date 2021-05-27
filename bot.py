@@ -174,7 +174,7 @@ def adding_user(message):
         except ValueError:
             bot.send_message(message.from_user.id, 'Отправленный формат неверен.')
         finally:
-            db.add_user(cursor, user_id, username, is_admin)
+            db.add_user(cursor, connect, user_id, username, is_admin)
             bot.send_message(
                 message.from_user.id,
                 f'Пользователь "{username}" добавлен.'

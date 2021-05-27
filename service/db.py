@@ -39,8 +39,9 @@ def list_users(cursor):
     return '\n'.join(users)
 
 
-def add_user(cursor, user_id, username, is_admin):
+def add_user(cursor, connect, user_id, username, is_admin):
     """Add user"""
 
     cursor.execute(
         f"INSERT INTO users VALUES ({user_id}, '{username}', {is_admin});")
+    connect.commit()
