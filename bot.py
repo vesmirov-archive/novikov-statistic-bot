@@ -28,18 +28,18 @@ SERVICE_FILE = env.get('SERVICE_FILE')
 
 # messages
 START = (
-    "Hi {}! I'm a Novikov LC bot.\n"
-    "I can send, store and process statistic data from \n"
-    "https://roistat.com/\n"
-    "and send you daily results, if you on my list.\n"
-    "For any questions you can contact with "
-    "@vilagov or @karlos979."
+    'Привет {}! Я бот юридического центра Новиков.\n'
+    'Я могу отправлять, фиксировать и просчитывать '
+    'данные из https://roistat.com/ '
+    'и отправлять ежедневную статистику в чат.\n'
+    'По любым вопросам можно обратиться к '
+    '@vilagov или @karlos979.'
     )
 HELP = (
-    'Commands:\n'
-    '/yesterday - get spendings for yesterday\n'
-    '/statistic - get statistic for yesterday\n'
-    '/update - update values if were not updated'
+    'Команды:\n'
+    '/today - показать расходы за сегодняшний день\n'
+    '/yesterday - показать расходы за вчерашний день\n'
+    '/statistic - собрать статистику за сегодня'
 )
 
 
@@ -49,15 +49,14 @@ manager = pygsheets.authorize(service_file=SERVICE_FILE)
 
 markup = telebot.types.ReplyKeyboardMarkup(row_width=2)
 itembtn1 = telebot.types.KeyboardButton('/statistic')
-itembtn2 = telebot.types.KeyboardButton('/yesterday')
-itembtn3 = telebot.types.KeyboardButton('/today')
-itembtn4 = telebot.types.InlineKeyboardButton('/help', url='help')
+itembtn2 = telebot.types.KeyboardButton('/today')
+itembtn3 = telebot.types.KeyboardButton('/yesterday')
+itembtn4 = telebot.types.InlineKeyboardButton('/help')
 markup.add(itembtn1, itembtn2, itembtn3, itembtn4)
 
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    """Say hi to user"""
 
     user_id = message.from_user.id
     name = message.from_user.first_name
@@ -66,7 +65,6 @@ def send_welcome(message):
 
 @bot.message_handler(commands=['help'])
 def send_help_text(message):
-    """Send help text with command list"""
 
     bot.send_message(message.from_user.id, HELP)
 
@@ -75,7 +73,7 @@ def send_help_text(message):
 def send_spendings_for_yesterday(message):
     yesterday = datetime.date.today() - datetime.timedelta(days=1)
     lands = get_landing_values(API_KEY, PROJECT, yesterday)
-    result = ['Roistat spendings for yesterday']
+    result = ['Расходы на рекламу за вчера']
     for name, values in lands.items():
         result.append(f'{name.upper()}:')
         result.extend([f'{round(p)} - {l}' for l, p in values.items()])
@@ -92,7 +90,7 @@ def send_spendings_for_yesterday(message):
 def send_spendings_for_today(message):
     today = datetime.date.today()
     lands = get_landing_values(API_KEY, PROJECT, today)
-    result = ['Roistat spendings for today']
+    result = ['Расходы на рекламу за сегодня']
     for name, values in lands.items():
         result.append(f'{name.upper()}:')
         result.extend([f'{round(p)} - {l}' for l, p in values.items()])
@@ -107,7 +105,7 @@ def send_spendings_for_today(message):
 
 @bot.message_handler(commands=['statistic'])
 def send_statistic(message):
-    result = ['Novikov LC statistic']
+    result = ['Статистика за сегодня']
     data = get_data_from_google_sheet(manager, SHEET_KEY, WORKSHEET_ID)
     for category, values in data.items():
         result.append(f'{category.upper()}:')
