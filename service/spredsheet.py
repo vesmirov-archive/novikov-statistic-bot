@@ -1,8 +1,7 @@
-import time
+import datetime
 
-START_DATE = 16074
-
-ROW_SHIFT = 2
+START_DATE = datetime.date(2021, 1, 1)
+ROW_SHIFT = 3
 
 CATEGORIES_WRITE = {
     'zaliv': 'E',
@@ -59,7 +58,8 @@ CATEGORIES_READ = {
 def write_data_to_google_sheet(manager, sheet_key, page_id, data):
     sheet = manager.open_by_key(sheet_key)
     page = sheet.worksheet('id', page_id)
-    row = str(int(time.time()) // 100000 - START_DATE + ROW_SHIFT)
+    diff = datetime.date.today() - START_DATE
+    row = str(diff.days + ROW_SHIFT)
 
     for name, value in data.items():
         if name in CATEGORIES_WRITE:
@@ -70,7 +70,8 @@ def write_data_to_google_sheet(manager, sheet_key, page_id, data):
 def get_data_from_google_sheet(manager, sheet_key, page_id):
     sheet = manager.open_by_key(sheet_key)
     page = sheet.worksheet('id', page_id)
-    row = str(int(time.time()) // 100000 - START_DATE + ROW_SHIFT)
+    diff = datetime.date.today() - START_DATE
+    row = str(diff.days + ROW_SHIFT)
 
     data = {}
     for category in CATEGORIES_READ:

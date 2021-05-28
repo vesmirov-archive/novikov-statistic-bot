@@ -6,8 +6,11 @@ import pygsheets
 from dotenv import dotenv_values
 
 from service import db
-from service.landings import get_landing_values
-from service.spredsheet import get_data_from_google_sheet
+from service.landings import get_landing_values, get_category_values
+from service.spredsheet import (
+    get_data_from_google_sheet,
+    write_data_to_google_sheet
+)
 
 env = dotenv_values('.env')
 
@@ -43,6 +46,7 @@ HELP = (
     '/today - отобразить расходы за сегодняшний день\n'
     '/yesterday - отобразить расходы за вчерашний день\n'
     '/statistic - собрать статистику за сегодня\n'
+    '/update - обновить данные за сегодняшний день\n'
     '/users - отобразить список пользователей\n'
     '/adduser - добавить пользователя'
 )
@@ -79,7 +83,6 @@ def permission_check(func):
 @bot.message_handler(commands=['start'])
 @permission_check
 def send_welcome(message):
-
     user_id = message.from_user.id
     name = message.from_user.first_name
     bot.send_message(user_id, START.format(name), reply_markup=markup)
@@ -88,7 +91,6 @@ def send_welcome(message):
 @bot.message_handler(commands=['help'])
 @permission_check
 def send_help_text(message):
-
     bot.send_message(message.from_user.id, HELP)
 
 
@@ -138,6 +140,19 @@ def send_statistic(message):
         result.extend([f'{name} - {val}' for name, val in values.items()])
         result.append('')
     bot.send_message(message.from_user.id, '\n'.join(result))
+
+
+@bot.message_handler(commands=['update'])
+@permission_check
+def update_data(message):
+    today = datetime.date.today()
+    data = get_category_values(API_KEY, PROJECT, today)
+    write_data_to_google_sheet(manager, SHEET_KEY, WORKSHEET_ID, data)
+
+    bot.send_message(
+        message.from_user.id,
+        'Данные в таблице заменены на актуальные'
+    )
 
 
 @bot.message_handler(commands=['users'])
