@@ -177,6 +177,8 @@ def adding_user(message):
                 message.from_user.id,
                 f'Пользователь "{username}" добавлен.'
             )
+    else:
+        bot.send_message(message.from_user.id, 'Отправленный формат неверен.')
 
 
 bot.polling()
