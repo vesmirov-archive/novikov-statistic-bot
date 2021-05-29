@@ -1,17 +1,17 @@
-make lint:
+lint:
 	poetry run flake8
 
-make start:
+start:
 	poetry run python bot.py
 
-make schedule:
+schedule:
 	poetry run python scheduler.py
 
 prepare:
 	poetry run python prepare.py
 
-make update:
+update:
 	poetry run python updater.py
 
-make notify:
+notify:
 	poetry run python notifier.py
