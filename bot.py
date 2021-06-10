@@ -27,7 +27,7 @@ CHAT = env.get('TELEGRAM_CHAT_ID')
 
 # google
 SHEET_KEY = env.get('SHEET_KEY')
-WORKSHEET_ID = env.get('WORKSHEET_ID')
+WORKSHEET_ID = env.get('WORKSHEET_STATISTIC_ID')
 CLIENT_SECRET_FILE = env.get('CLIENT_SECRET_FILE')
 
 # messages
