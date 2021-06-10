@@ -12,7 +12,7 @@ API_KEY = env.get('API_KEY')
 PROJECT = env.get('PROJECT_ID')
 
 # telegram
-TOKEN = env.get('TELEGRAM_TOKEN')
+TOKEN = env.get('TELEGRAM_STATISTIC_TOKEN')
 CHAT = env.get('TELEGRAM_CHAT_ID')
 
 # google
