@@ -1,9 +1,12 @@
+"""
+    Bot's module with specified commands
+"""
 
 import datetime
 
-import telebot
-import pygsheets
 from dotenv import dotenv_values
+import pygsheets
+import telebot
 
 from service import db
 from service.landings import get_landing_values, get_category_values
@@ -25,7 +28,7 @@ CHAT = env.get('TELEGRAM_CHAT_ID')
 # google
 SHEET_KEY = env.get('SHEET_KEY')
 WORKSHEET_ID = env.get('WORKSHEET_ID')
-SERVICE_FILE = env.get('SERVICE_FILE')
+CLIENT_SECRET_FILE = env.get('CLIENT_SECRET_FILE')
 
 # messages
 START = (
@@ -53,7 +56,7 @@ HELP = (
 
 
 bot = telebot.TeleBot(TOKEN)
-manager = pygsheets.authorize(service_file=SERVICE_FILE)
+manager = pygsheets.authorize(client_secret=CLIENT_SECRET_FILE)
 connect, cursor = db.connect_database(env)
 
 markup = telebot.types.ReplyKeyboardMarkup(row_width=3)
@@ -68,8 +71,8 @@ markup.add(itembtn1, itembtn2, itembtn3, itembtn4, itembtn5, itembtn6)
 
 def permission_check(func):
     """
-    User permission check decorator.
-    If user id not in database, send 'deny access' message.
+        User permission check decorator.
+        If user id not in database, send 'deny access' message.
     """
 
     def inner(message):
@@ -82,7 +85,9 @@ def permission_check(func):
 
 @bot.message_handler(commands=['start'])
 @permission_check
-def send_welcome(message):
+def greet_user(message):
+    """Greet user"""
+
     user_id = message.from_user.id
     name = message.from_user.first_name
     bot.send_message(user_id, START.format(name), reply_markup=markup)
@@ -91,12 +96,16 @@ def send_welcome(message):
 @bot.message_handler(commands=['help'])
 @permission_check
 def send_help_text(message):
+    """Send help-text to user"""
+
     bot.send_message(message.from_user.id, HELP)
 
 
 @bot.message_handler(commands=['yesterday'])
 @permission_check
 def send_spendings_for_yesterday(message):
+    """Show spendings in roistat for yesterday"""
+
     yesterday = datetime.date.today() - datetime.timedelta(days=1)
     lands = get_landing_values(API_KEY, PROJECT, yesterday)
     result = ['Расходы на рекламу за вчера']
@@ -115,6 +124,8 @@ def send_spendings_for_yesterday(message):
 @bot.message_handler(commands=['today'])
 @permission_check
 def send_spendings_for_today(message):
+    """Show spendings in roistat for today"""
+
     today = datetime.date.today()
     lands = get_landing_values(API_KEY, PROJECT, today)
     result = ['Расходы на рекламу за сегодня']
@@ -133,6 +144,8 @@ def send_spendings_for_today(message):
 @bot.message_handler(commands=['statistic'])
 @permission_check
 def send_statistic(message):
+    """Show all statistic for today"""
+
     result = ['Статистика за сегодня']
     data = get_data_from_google_sheet(manager, SHEET_KEY, WORKSHEET_ID)
     for category, values in data.items():
@@ -145,6 +158,8 @@ def send_statistic(message):
 @bot.message_handler(commands=['update'])
 @permission_check
 def update_data(message):
+    """Update data manualy in google worksheet"""
+
     today = datetime.date.today()
     data = get_category_values(API_KEY, PROJECT, today)
     write_data_to_google_sheet(manager, SHEET_KEY, WORKSHEET_ID, data)
@@ -158,6 +173,8 @@ def update_data(message):
 @bot.message_handler(commands=['users'])
 @permission_check
 def send_list_users(message):
+    """Show all added users to this bot"""
+
     users = db.list_users(cursor)
     bot.send_message(message.from_user.id, users)
 
@@ -165,6 +182,8 @@ def send_list_users(message):
 @bot.message_handler(commands=['adduser'])
 @permission_check
 def start_adding_user(message):
+    """Add user to this bot"""
+
     message = bot.send_message(
         message.from_user.id,
         'Отправьте данные добавляемого пользователя в следующем формате:\n'
@@ -176,6 +195,8 @@ def start_adding_user(message):
 
 
 def adding_user(message):
+    """User adding process"""
+
     data = message.text.split()
 
     if len(data) == 3:

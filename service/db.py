@@ -1,3 +1,7 @@
+"""
+    Database module for for working with PostgreSQL
+"""
+
 import psycopg2
 
 

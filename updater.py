@@ -1,3 +1,7 @@
+"""
+    Updates data on google worksheet
+"""
+
 import datetime
 
 import pygsheets
@@ -15,14 +19,16 @@ PROJECT = env.get('PROJECT_ID')
 # google
 SHEET_KEY = env.get('SHEET_KEY')
 WORKSHEET_ID = env.get('WORKSHEET_ID')
-SERVICE_FILE = env.get('SERVICE_FILE')
+CLIENT_SECRET_FILE = env.get('CLIENT_SECRET_FILE')
 
 
 def main():
+    """Update data for today, when called"""
+
     today = datetime.date.today()
     data = get_category_values(API_KEY, PROJECT, today)
 
-    manager = pygsheets.authorize(service_file=SERVICE_FILE)
+    manager = pygsheets.authorize(client_secret=CLIENT_SECRET_FILE)
     write_data_to_google_sheet(manager, SHEET_KEY, WORKSHEET_ID, data)
 
 

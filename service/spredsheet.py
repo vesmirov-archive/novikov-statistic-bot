@@ -1,3 +1,7 @@
+"""
+    Google sheets module
+"""
+
 import datetime
 
 START_DATE = datetime.date(2021, 1, 1)
@@ -56,6 +60,8 @@ CATEGORIES_READ = {
 
 
 def write_data_to_google_sheet(manager, sheet_key, page_id, data):
+    """Update specific worksheet with given values"""
+
     sheet = manager.open_by_key(sheet_key)
     page = sheet.worksheet('id', page_id)
     diff = datetime.date.today() - START_DATE
@@ -68,6 +74,8 @@ def write_data_to_google_sheet(manager, sheet_key, page_id, data):
 
 
 def get_data_from_google_sheet(manager, sheet_key, page_id):
+    """Get values from specific worksheet"""
+
     sheet = manager.open_by_key(sheet_key)
     page = sheet.worksheet('id', page_id)
     diff = datetime.date.today() - START_DATE

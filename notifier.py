@@ -18,14 +18,14 @@ CHAT = env.get('TELEGRAM_CHAT_ID')
 # google
 SHEET_KEY = env.get('SHEET_KEY')
 WORKSHEET_ID = env.get('WORKSHEET_ID')
-SERVICE_FILE = env.get('SERVICE_FILE')
+CLIENT_SECRET_FILE = env.get('CLIENT_SECRET_FILE')
 
 
 def main():
     connect, cursor = db.connect_database(env)
 
     bot = telebot.TeleBot(TOKEN)
-    manager = pygsheets.authorize(service_file=SERVICE_FILE)
+    manager = pygsheets.authorize(client_secret=CLIENT_SECRET_FILE)
 
     result = ['Daily statistic']
     data = get_data_from_google_sheet(manager, SHEET_KEY, WORKSHEET_ID)

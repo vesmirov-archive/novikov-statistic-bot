@@ -1,3 +1,7 @@
+"""
+    Roistat module for working with https://www.roistat.com API
+"""
+
 import requests
 
 DDU_PREFIX = 'ddu'
@@ -10,6 +14,8 @@ API_URL = 'https://cloud.roistat.com/api/v1/{}?'
 
 
 def get_landing_values(key, project, day):
+    """Get spendings for each project's landing"""
+
     landing_pages = {
         'ddu': {},
         'priemka': {},
@@ -55,6 +61,8 @@ def get_landing_values(key, project, day):
 
 
 def get_category_values(key, project, day):
+    """Get spendings for each project's category"""
+
     categories = {}
 
     landing_pages = get_landing_values(key, project, day)
