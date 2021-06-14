@@ -217,5 +217,9 @@ def adding_user(message):
         bot.send_message(message.from_user.id, 'Отправленный формат неверен.')
 
 
-bot.polling()
+try:
+  bot.polling()
+except Exception as e:
+  print(e)
+
 connect.close()
