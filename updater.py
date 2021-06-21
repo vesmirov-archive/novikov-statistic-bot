@@ -28,7 +28,7 @@ def main():
     today = datetime.date.today()
     data = get_category_values(API_KEY, PROJECT, today)
 
-    manager = pygsheets.authorize(client_secret=CLIENT_SECRET_FILE)
+    manager = pygsheets.authorize(service_account_file=CLIENT_SECRET_FILE)
     write_data_to_google_sheet(manager, SHEET_KEY, WORKSHEET_ID, data)
 
 

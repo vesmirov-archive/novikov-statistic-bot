@@ -29,7 +29,7 @@ def main():
     connect, cursor = db.connect_database(env)
 
     bot = telebot.TeleBot(TOKEN)
-    manager = pygsheets.authorize(client_secret=CLIENT_SECRET_FILE)
+    manager = pygsheets.authorize(service_account_file=CLIENT_SECRET_FILE)
 
     result = ['Daily statistic']
     data = get_data_from_google_sheet(manager, SHEET_KEY, WORKSHEET_ID)

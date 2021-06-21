@@ -56,7 +56,7 @@ HELP = (
 
 
 bot = telebot.TeleBot(TOKEN)
-manager = pygsheets.authorize(client_secret=CLIENT_SECRET_FILE)
+manager = pygsheets.authorize(service_account_file=CLIENT_SECRET_FILE)
 connect, cursor = db.connect_database(env)
 
 markup = telebot.types.ReplyKeyboardMarkup(row_width=3)
